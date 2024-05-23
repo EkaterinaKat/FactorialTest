@@ -1,7 +1,6 @@
 package com.katysh.factorialtest
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,29 +23,30 @@ class MainActivity : AppCompatActivity() {
 
         observeViewModel()
         binding.buttonCalculate.setOnClickListener {
-            Log.i("tag54434", "*****")
             viewModel.calculate(binding.editTextNumber.text.toString())
         }
     }
 
     private fun observeViewModel() {
-        viewModel.errorLd.observe(this) {
-            if (it) {
-                Toast.makeText(this, "ERROR!", Toast.LENGTH_SHORT).show()
-            }
-        }
-        viewModel.factorialLd.observe(this) {
-            binding.textViewFactorial.text = it
-        }
-        viewModel.isLaunchingLd.observe(this) {
-            if (it) {
-                binding.progressBarLoading.visibility = View.VISIBLE
-                binding.buttonCalculate.isEnabled = false
-            } else {
-                binding.progressBarLoading.visibility = View.GONE
-                binding.buttonCalculate.isEnabled = true
-            }
+        viewModel.stateLd.observe(this) {
 
+            binding.progressBarLoading.visibility = View.GONE
+            binding.buttonCalculate.isEnabled = true
+
+            when (it) {
+                is Error -> {
+                    Toast.makeText(this, "ERROR!", Toast.LENGTH_SHORT).show()
+                }
+
+                is Progress -> {
+                    binding.progressBarLoading.visibility = View.VISIBLE
+                    binding.buttonCalculate.isEnabled = false
+                }
+
+                is Result -> {
+                    binding.textViewFactorial.text = it.factorial
+                }
+            }
         }
     }
 }

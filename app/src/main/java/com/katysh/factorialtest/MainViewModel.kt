@@ -9,33 +9,23 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val _errorLd = MutableLiveData<Boolean>()
-    val errorLd: LiveData<Boolean>
-        get() = _errorLd
-
-    private val _factorialLd = MutableLiveData<String>()
-    val factorialLd: LiveData<String>
-        get() = _factorialLd
-
-    private val _isLaunchingLd = MutableLiveData<Boolean>()
-    val isLaunchingLd: LiveData<Boolean>
-        get() = _isLaunchingLd
+    private val _stateLd = MutableLiveData<State>()
+    val stateLd: LiveData<State>
+        get() = _stateLd
 
     fun calculate(value: String?) {
-        _isLaunchingLd.value = true
+        _stateLd.value = Progress
 
         if (value.isNullOrBlank()) {
-            _isLaunchingLd.value = false
-            _errorLd.value = true
+            _stateLd.value = Error
             return
         }
 
         viewModelScope.launch {
             val num = value.toLong()
-            //calculate
+            //todo calculate
             delay(1000)
-            _isLaunchingLd.value = false
-            _factorialLd.value = num.toString()
+            _stateLd.value = Result(num.toString())
         }
     }
 }
